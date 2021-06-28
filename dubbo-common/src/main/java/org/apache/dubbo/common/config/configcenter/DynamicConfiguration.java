@@ -29,7 +29,7 @@ import static org.apache.dubbo.common.config.configcenter.DynamicConfigurationFa
 import static org.apache.dubbo.common.extension.ExtensionLoader.getExtensionLoader;
 
 /**
- * Dynamic Configuration
+ * Dynamic Configuration（治理规则，配置项）
  * <br/>
  * From the use scenario internally inside framework, there're mainly three kinds of methods:
  * <ol>
@@ -198,7 +198,7 @@ public interface DynamicConfiguration extends Configuration, AutoCloseable {
     default void close() throws Exception {
         throw new UnsupportedOperationException();
     }
-
+    // 疑惑：下面这一部分和DynamicConfigurationFactory的功能重合了
     /**
      * Find DynamicConfiguration instance
      *
@@ -206,7 +206,9 @@ public interface DynamicConfiguration extends Configuration, AutoCloseable {
      */
     static DynamicConfiguration getDynamicConfiguration() {
         Optional<DynamicConfiguration> optional = ApplicationModel.getEnvironment().getDynamicConfiguration();
+        // 细节，借鉴：采用了orElseGet
         return optional.orElseGet(() -> getExtensionLoader(DynamicConfigurationFactory.class)
+                // 细节： getDefaultExtension 和 getOrDefaultExtension
                 .getDefaultExtension()
                 .getDynamicConfiguration(null));
     }

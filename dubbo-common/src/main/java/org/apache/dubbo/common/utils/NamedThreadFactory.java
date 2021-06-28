@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * InternalThreadFactory.
+ * 借鉴，多线程：自定义线程池工厂
  */
 public class NamedThreadFactory implements ThreadFactory {
 

@@ -16,6 +16,9 @@
  */
 package org.apache.dubbo.common.context;
 
+/**
+ * 设计模式：默认适配器，最简单的一种
+ */
 public abstract class LifecycleAdapter implements Lifecycle {
 
     @Override

@@ -159,6 +159,10 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
         throw new IllegalStateException("The instance is not a primitive type wrapper");
     }
 
+    /**
+     * 返回的对象和被克隆对象是一致的
+     * @return
+     */
     public Object getPrimitiveProperty() {
         if (isPrimitiveType()) {
             return getProperty(PRIMITIVE_PROPERTY_VALUE);
@@ -175,7 +179,7 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
         notNull(propertyName, "Property name is null");
         return properties.containsKey(propertyName);
     }
-
+    // 借鉴：需要iterator的场景
     @Override
     public Iterator<Map.Entry<Object, Object>> iterator() {
         return properties.entrySet().iterator();

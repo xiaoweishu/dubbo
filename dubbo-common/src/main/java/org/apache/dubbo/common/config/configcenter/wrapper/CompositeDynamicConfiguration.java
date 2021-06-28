@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
+ * 编程风格，设计模式：See @CompositeConfiguration类一样
  * support multiple config center, simply iterating each concrete config center.
  */
 public class CompositeDynamicConfiguration implements DynamicConfiguration {
@@ -81,13 +82,13 @@ public class CompositeDynamicConfiguration implements DynamicConfiguration {
     public SortedSet<String> getConfigKeys(String group) throws UnsupportedOperationException {
         return (SortedSet<String>) iterateConfigOperation(configuration -> configuration.getConfigKeys(group));
     }
-
+    // 借鉴：用起来简单，包含的思想比较复杂，优点，可以将一段做类似事情的剥离出来，作为公共的，特殊的操作改为函数式行为自己嵌入
     private void iterateListenerOperation(Consumer<DynamicConfiguration> consumer) {
         for (DynamicConfiguration configuration : configurations) {
             consumer.accept(configuration);
         }
     }
-
+    // 优雅，编程风格，借鉴
     private Object iterateConfigOperation(Function<DynamicConfiguration, Object> func) {
         Object value = null;
         for (DynamicConfiguration configuration : configurations) {

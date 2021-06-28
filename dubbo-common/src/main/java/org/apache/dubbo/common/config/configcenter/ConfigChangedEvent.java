@@ -76,6 +76,7 @@ public class ConfigChangedEvent extends EventObject {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ConfigChangedEvent)) return false;
+        //
         ConfigChangedEvent that = (ConfigChangedEvent) o;
         return Objects.equals(getKey(), that.getKey()) &&
                 Objects.equals(getGroup(), that.getGroup()) &&
@@ -85,6 +86,7 @@ public class ConfigChangedEvent extends EventObject {
 
     @Override
     public int hashCode() {
+        // 借鉴：
         return Objects.hash(getKey(), getGroup(), getContent(), getChangeType());
     }
 }

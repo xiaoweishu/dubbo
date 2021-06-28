@@ -41,6 +41,7 @@ public class ShutdownHookCallbacks {
     }
 
     public ShutdownHookCallbacks addCallback(ShutdownHookCallback callback) {
+        // 疑惑：为什么不直接使用线程安全的list
         synchronized (this) {
             this.callbacks.add(callback);
         }

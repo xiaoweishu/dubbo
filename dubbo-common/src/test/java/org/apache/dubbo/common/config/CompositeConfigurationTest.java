@@ -20,4 +20,12 @@ package org.apache.dubbo.common.config;
  *
  */
 public class CompositeConfigurationTest {
+    public static void main(String[] args) {
+        InmemoryConfiguration one = new InmemoryConfiguration();
+        InmemoryConfiguration two = new InmemoryConfiguration();
+        SystemConfiguration three = new SystemConfiguration();
+        // 这里one, two, one, three 都包含，疑惑？？
+        CompositeConfiguration compositeConfiguration = new CompositeConfiguration(one, two, one, three);
+        System.err.println(one.equals(one));
+    }
 }

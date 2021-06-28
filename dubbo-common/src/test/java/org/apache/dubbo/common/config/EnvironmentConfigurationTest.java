@@ -61,6 +61,7 @@ class EnvironmentConfigurationTest {
     }
 
     protected static void setEnv(Map<String, String> newenv) throws Exception {
+        // 新奇：利用反射
         try {
             Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
             Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
@@ -79,6 +80,7 @@ class EnvironmentConfigurationTest {
                     Field field = cl.getDeclaredField("m");
                     field.setAccessible(true);
                     Object obj = field.get(env);
+                    // 这里值为map
                     Map<String, String> map = (Map<String, String>) obj;
                     map.clear();
                     map.putAll(newenv);

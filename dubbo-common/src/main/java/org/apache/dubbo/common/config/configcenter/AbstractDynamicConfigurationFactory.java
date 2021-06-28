@@ -30,7 +30,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_KEY;
  * @since 2.7.5
  */
 public abstract class AbstractDynamicConfigurationFactory implements DynamicConfigurationFactory {
-
+    // 细节，多线程：配合旧版的单例模式理解
     private volatile Map<String, DynamicConfiguration> dynamicConfigurations = new ConcurrentHashMap<>();
 
     @Override

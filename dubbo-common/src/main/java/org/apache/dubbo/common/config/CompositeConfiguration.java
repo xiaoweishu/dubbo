@@ -95,6 +95,7 @@ public class CompositeConfiguration implements Configuration {
 
     @Override
     public boolean containsKey(String key) {
+        // 借鉴：
         return configList.stream().anyMatch(c -> c.containsKey(key));
     }
 

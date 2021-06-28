@@ -125,6 +125,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
     protected abstract void doClose() throws Exception;
 
     /**
+     * 细节：定义为final
      * Executes the {@link Runnable} with the specified timeout
      *
      * @param task    the {@link Runnable task}
@@ -138,6 +139,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
     }
 
     /**
+     * 借鉴，优雅：
      * Executes the {@link Callable} with the specified timeout
      *
      * @param task    the {@link Callable task}

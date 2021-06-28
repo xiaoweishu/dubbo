@@ -102,6 +102,7 @@ public class AbstractDynamicConfigurationTest {
         assertEquals(10, threadPoolExecutor.getCorePoolSize());
         assertEquals(10, threadPoolExecutor.getMaximumPoolSize());
         assertEquals(100, threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS));
+        // 内部的线程池工厂，生成名字规则
         assertEquals("test-thread-1", thread.getName());
     }
 

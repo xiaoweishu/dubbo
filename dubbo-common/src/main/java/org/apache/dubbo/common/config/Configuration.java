@@ -136,7 +136,14 @@ public interface Configuration {
         return getProperty(key) != null;
     }
 
-
+    /**
+     * 只负责包装类的转换工作
+     * @param cls
+     * @param key
+     * @param defaultValue
+     * @param <T>
+     * @return
+     */
     default <T> T convert(Class<T> cls, String key, T defaultValue) {
         // we only process String properties for now
         String value = (String) getProperty(key);
