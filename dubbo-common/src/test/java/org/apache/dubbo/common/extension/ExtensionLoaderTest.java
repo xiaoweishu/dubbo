@@ -399,12 +399,14 @@ public class ExtensionLoaderTest {
         list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, new String[]{}, "old_group");
         Assertions.assertEquals(2, list.size());
+        // 不保证顺序
         Assertions.assertTrue(list.get(0).getClass() == OldActivateExt1Impl2.class
                 || list.get(0).getClass() == OldActivateExt1Impl3.class);
 
         // test value
         url = url.removeParameter(GROUP_KEY);
         url = url.addParameter(GROUP_KEY, "value");
+        // value参数
         url = url.addParameter("value", "value");
         list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, new String[]{}, "value");
@@ -417,6 +419,7 @@ public class ExtensionLoaderTest {
         list = getExtensionLoader(ActivateExt1.class)
                 .getActivateExtension(url, new String[]{}, "order");
         Assertions.assertEquals(2, list.size());
+
         Assertions.assertSame(list.get(0).getClass(), OrderActivateExtImpl1.class);
         Assertions.assertSame(list.get(1).getClass(), OrderActivateExtImpl2.class);
     }

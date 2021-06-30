@@ -20,6 +20,9 @@ package org.apache.dubbo.common.extension.activate.impl;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.extension.activate.ActivateExt1;
 
+/**
+ * 用order保证顺序了
+ */
 @Activate(order = 1, group = {"order"})
 public class OrderActivateExtImpl1 implements ActivateExt1 {
 

@@ -20,6 +20,9 @@ package org.apache.dubbo.common.extension.activate.impl;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.extension.activate.ActivateExt1;
 
+/**
+ * 借鉴：可以运用到实际项目中去，这里要求value和group参数同时匹配
+ */
 @Activate(value = {"value"}, group = {"value"})
 public class ValueActivateExtImpl implements ActivateExt1 {
 

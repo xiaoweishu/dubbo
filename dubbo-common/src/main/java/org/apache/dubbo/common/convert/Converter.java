@@ -26,7 +26,7 @@ import static org.apache.dubbo.common.utils.TypeUtils.findActualTypeArgument;
 
 /**
  * A class to convert the source-typed value to the target-typed value
- *
+ * 借鉴，优雅，反射：
  * @param <S> The source type
  * @param <T> The target type
  * @since 2.7.6

@@ -68,6 +68,7 @@ public class ExtensionLoader_Adaptive_Test {
             SimpleExt ext = ExtensionLoader.getExtensionLoader(SimpleExt.class).getAdaptiveExtension();
 
             Map<String, String> map = new HashMap<String, String>();
+            // 使用示例
             map.put("simple.ext", "impl2");
             URL url = new URL("p1", "1.2.3.4", 1010, "path1", map);
 
@@ -86,7 +87,7 @@ public class ExtensionLoader_Adaptive_Test {
 
         String echo = ext.yell(url, "haha");
         assertEquals("Ext1Impl2-yell", echo);
-
+        // 优先找key1，再找key2
         url = url.addParameter("key1", "impl3"); // note: URL is value's type
         echo = ext.yell(url, "haha");
         assertEquals("Ext1Impl3-yell", echo);
