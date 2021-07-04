@@ -256,7 +256,7 @@ final class EventPublishingServiceDiscovery implements ServiceDiscovery {
             }
             return;
         }
-
+        // 新奇，借鉴，优雅：
         executeWithEvents(
                 of(new ServiceDiscoveryDestroyingEvent(this, serviceDiscovery)),
                 serviceDiscovery::destroy,

@@ -83,7 +83,7 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt {
     public Optional<ApplicationConfig> getApplication() {
         return ofNullable(getConfig(getTagName(ApplicationConfig.class)));
     }
-
+    // 命名，编程风格：
     public ApplicationConfig getApplicationOrElseThrow() {
         return getApplication().orElseThrow(() -> new IllegalStateException("There's no ApplicationConfig specified."));
     }
@@ -436,6 +436,10 @@ public class ConfigManager extends LifecycleAdapter implements FrameworkExt {
         return value;
     }
 
+    /**
+     * 风格：
+     * @param runnable
+     */
     private void write(Runnable runnable) {
         write(() -> {
             runnable.run();

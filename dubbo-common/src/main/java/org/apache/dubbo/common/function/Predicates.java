@@ -22,7 +22,7 @@ import static java.util.stream.Stream.of;
 
 /**
  * The utilities class for Java {@link Predicate}
- *
+ * 设计：类似于组合模式
  * @since 2.7.5
  */
 public interface Predicates {

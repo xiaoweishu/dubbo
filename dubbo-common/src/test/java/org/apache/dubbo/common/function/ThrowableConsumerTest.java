@@ -31,6 +31,7 @@ public class ThrowableConsumerTest {
     @Test
     public void testExecute() {
         assertThrows(RuntimeException.class, () -> execute("Hello,World", m -> {
+            System.err.println("ss");
             throw new Exception(m);
         }), "Hello,World");
     }

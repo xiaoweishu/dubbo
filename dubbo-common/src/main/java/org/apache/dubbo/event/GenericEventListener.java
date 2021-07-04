@@ -76,6 +76,7 @@ public abstract class GenericEventListener implements EventListener<Event> {
 
     public final void onEvent(Event event) {
         Class<?> eventClass = event.getClass();
+        // 新奇：以前没考虑过this，传入lambda表达式中
         handleEventMethods.getOrDefault(eventClass, emptySet()).forEach(method -> {
             ThrowableConsumer.execute(method, m -> {
                 m.invoke(this, event);

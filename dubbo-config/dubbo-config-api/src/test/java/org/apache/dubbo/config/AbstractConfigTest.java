@@ -290,6 +290,7 @@ public class AbstractConfigTest {
     @Test
     public void testRefreshAll() {
         try {
+            // 使用示例：命名是Override,所以内部框架解析过后的配置key名为:dubbo.override.xxx
             OverrideConfig overrideConfig = new OverrideConfig();
             overrideConfig.setAddress("override-config://127.0.0.1:2181");
             overrideConfig.setProtocol("override-config");
@@ -298,12 +299,13 @@ public class AbstractConfigTest {
 
             Map<String, String> external = new HashMap<>();
             external.put("dubbo.override.address", "external://127.0.0.1:2181");
-            // @Parameter(exclude=true)
-            external.put("dubbo.override.exclude", "external");
+            // @Parameter(exclude=true),疑问：exclude啥意思
+            external.put("dubbo.override.exclude", "external1");
             // @Parameter(key="key1", useKeyAsProperty=false)
             external.put("dubbo.override.key", "external");
             // @Parameter(key="key2", useKeyAsProperty=true)
             external.put("dubbo.override.key2", "external");
+            // 外部化配置映射
             ApplicationModel.getEnvironment().setExternalConfigMap(external);
             ApplicationModel.getEnvironment().initialize();
 
@@ -321,6 +323,7 @@ public class AbstractConfigTest {
             Assertions.assertEquals("override-config://", overrideConfig.getEscape());
             Assertions.assertEquals("external", overrideConfig.getKey());
             Assertions.assertEquals("system", overrideConfig.getUseKeyAsProperty());
+            Assertions.assertEquals("override-config", overrideConfig.getExclude());
         } finally {
             System.clearProperty("dubbo.override.address");
             System.clearProperty("dubbo.override.protocol");

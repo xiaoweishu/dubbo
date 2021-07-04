@@ -22,6 +22,9 @@ import org.apache.log4j.spi.LoggingEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 借鉴，三方开源扩展：
+ */
 public class DubboAppender extends FileAppender {
 
     private static final String DEFAULT_FILE_NAME = "dubbo.log";
@@ -32,13 +35,13 @@ public class DubboAppender extends FileAppender {
     }
 
     public static boolean available = false;
-
+    // 疑问：这里为啥不用多线程安全的集合
     public static List<Log> logList = new ArrayList<>();
 
     public static void doStart() {
         available = true;
     }
-
+    // 命名：
     public static void doStop() {
         available = false;
     }

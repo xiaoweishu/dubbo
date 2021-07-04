@@ -96,6 +96,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     }
 
     protected Stream<EventListener> sortedListeners(Predicate<Map.Entry<Class<? extends Event>, List<EventListener>>> predicate) {
+        // 流式处理：
         return listenersCache
                 .entrySet()
                 .stream()
@@ -143,6 +144,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     protected void doInListener(EventListener<?> listener, Consumer<Collection<EventListener>> consumer) {
         Class<? extends Event> eventType = findEventType(listener);
         if (eventType != null) {
+            // 此处加锁控制，一系列复合操作
             synchronized (mutex) {
                 List<EventListener> listeners = listenersCache.computeIfAbsent(eventType, e -> new LinkedList<>());
                 // consume

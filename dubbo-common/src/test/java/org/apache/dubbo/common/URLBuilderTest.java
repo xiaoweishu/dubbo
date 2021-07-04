@@ -80,6 +80,7 @@ public class URLBuilderTest {
     @Test
     public void shouldRemoveParameters() {
         URL url1 = URL.valueOf("dubbo://admin:hello1234@10.20.130.230:20880/context/path?version=1.0.0&application=morgan&key2=v2");
+        // 这样操作:
         URL url2 = URLBuilder.from(url1)
                 .removeParameters(Arrays.asList("key2", "application"))
                 .build();

@@ -59,14 +59,17 @@ public class GenericEventListenerTest {
         private EchoEvent echoEvent;
 
         public void onEvent(EchoEvent echoEvent) {
+            System.err.println("回调1");
             this.echoEvent = echoEvent;
         }
 
         public void event(EchoEvent echoEvent) {
+            System.err.println("回调2");
             assertEquals("Hello,World", echoEvent.getSource());
         }
 
         public void event(EchoEvent echoEvent, Object arg) {
+            System.err.println("回调3");
             this.echoEvent = echoEvent;
         }
 

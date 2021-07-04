@@ -29,6 +29,7 @@ public class StatusUtils {
     public static Status getSummaryStatus(Map<String, Status> statuses) {
         Level level = Level.OK;
         StringBuilder msg = new StringBuilder();
+        // 细节,集合：
         for (Map.Entry<String, Status> entry : statuses.entrySet()) {
             String key = entry.getKey();
             Status status = entry.getValue();

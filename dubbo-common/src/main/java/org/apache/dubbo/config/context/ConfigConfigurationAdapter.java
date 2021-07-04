@@ -27,7 +27,7 @@ import java.util.Map;
  * This class receives an {@link AbstractConfig} and exposes its attributes through {@link Configuration}
  */
 public class ConfigConfigurationAdapter implements Configuration {
-
+    // 细节：只有读的场景，不用加锁
     private Map<String, String> metaData;
 
     public ConfigConfigurationAdapter(AbstractConfig config) {

@@ -46,6 +46,7 @@ public class NamedThreadFactory implements ThreadFactory {
     public NamedThreadFactory(String prefix, boolean daemon) {
         mPrefix = prefix + "-thread-";
         mDaemon = daemon;
+        // 新奇
         SecurityManager s = System.getSecurityManager();
         mGroup = (s == null) ? Thread.currentThread().getThreadGroup() : s.getThreadGroup();
     }
