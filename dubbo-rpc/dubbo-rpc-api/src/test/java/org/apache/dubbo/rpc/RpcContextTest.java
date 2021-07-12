@@ -168,6 +168,7 @@ public class RpcContextTest {
         rpcFuture.whenComplete((rpcResult, throwable) -> {
             System.out.println(throwable.toString());
             Assertions.assertNull(rpcResult);
+            // 出现错误，被包装成了RpcException
             Assertions.assertTrue(throwable instanceof RpcException);
             Assertions.assertTrue(throwable.getCause() instanceof NullPointerException);
         });

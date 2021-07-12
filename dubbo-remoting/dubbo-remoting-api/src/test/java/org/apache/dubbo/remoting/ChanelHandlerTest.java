@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.remoting;
 
+import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.remoting.exchange.ExchangeClient;
@@ -120,6 +121,13 @@ public class ChanelHandlerTest  {
 //            System.out.println("caught event:"+exception);
         }
 
+
+    }
+    @Test
+    public void testSPI() {
+//        ChannelHandler extension = ExtensionLoader.getExtensionLoader(ChannelHandler.class).getAdaptiveExtension();
+        ChannelHandler extension2 = ExtensionLoader.getExtensionLoader(ChannelHandler.class).getDefaultExtension();
+        String name = ExtensionLoader.getExtensionLoader(ChannelHandler.class).getDefaultExtensionName();
 
     }
 }

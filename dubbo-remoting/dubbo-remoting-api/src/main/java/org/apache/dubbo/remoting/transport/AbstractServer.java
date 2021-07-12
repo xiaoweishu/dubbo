@@ -78,7 +78,7 @@ public abstract class AbstractServer extends AbstractEndpoint implements Remotin
         }
         executor = executorRepository.createExecutorIfAbsent(url);
     }
-
+    // 借鉴：模板方法
     protected abstract void doOpen() throws Throwable;
 
     protected abstract void doClose() throws Throwable;

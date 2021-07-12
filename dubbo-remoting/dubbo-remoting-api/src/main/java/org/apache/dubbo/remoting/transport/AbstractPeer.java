@@ -25,6 +25,7 @@ import org.apache.dubbo.remoting.RemotingException;
 
 /**
  * AbstractPeer
+ * 设计模式：委托模式，内部主要都是靠ChannelHandler实现功能
  */
 public abstract class AbstractPeer implements Endpoint, ChannelHandler {
 

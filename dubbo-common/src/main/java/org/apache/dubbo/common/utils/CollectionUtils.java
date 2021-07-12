@@ -184,6 +184,11 @@ public class CollectionUtils {
         return obj1.equals(obj2);
     }
 
+    /**
+     * 借鉴，引入项目：注意传参，一次使用多组key,value，都为String
+     * @param pairs
+     * @return
+     */
     public static Map<String, String> toStringMap(String... pairs) {
         Map<String, String> parameters = new HashMap<>();
         if (ArrayUtils.isEmpty(pairs)) {

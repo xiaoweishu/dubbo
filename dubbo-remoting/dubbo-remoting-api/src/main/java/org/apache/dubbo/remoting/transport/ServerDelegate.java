@@ -27,7 +27,7 @@ import java.util.Collection;
 
 /**
  * ServerDelegate
- *
+ * 设计模式:委托模式
  *
  */
 public class ServerDelegate implements RemotingServer {

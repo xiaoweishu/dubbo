@@ -90,6 +90,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
         if (clients.length == 1) {
             currentClient = clients[0];
         } else {
+            // 细节：
             currentClient = clients[index.getAndIncrement() % clients.length];
         }
         try {

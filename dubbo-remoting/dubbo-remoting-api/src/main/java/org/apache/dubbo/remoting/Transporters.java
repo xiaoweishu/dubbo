@@ -24,6 +24,7 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerDispatcher;
 
 /**
  * Transporter facade. (API, Static, ThreadSafe)
+ * 设计模式：门面模式
  */
 public class Transporters {
 

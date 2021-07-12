@@ -54,7 +54,13 @@ public class ClientsTest {
         String name = "mina";
         assertEquals(MinaTransporter.class, ExtensionLoader.getExtensionLoader(Transporter.class).getExtension(name).getClass());
     }
-
+    @Test
+    public void testGetTransport2() {
+        String name = "netty3";
+        assertEquals(org.apache.dubbo.remoting.transport.netty.NettyTransporter.class, ExtensionLoader.getExtensionLoader(Transporter.class).getExtension(name).getClass());
+        name = "netty4";
+        assertEquals(org.apache.dubbo.remoting.transport.netty4.NettyTransporter.class, ExtensionLoader.getExtensionLoader(Transporter.class).getExtension(name).getClass());
+    }
     @Test
     public void testGetTransportWrong() {
         Assertions.assertThrows(IllegalStateException.class, () -> {

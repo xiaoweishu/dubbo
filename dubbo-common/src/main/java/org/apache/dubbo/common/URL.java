@@ -679,7 +679,7 @@ class URL implements Serializable {
         getNumbers().put(key, l);
         return l;
     }
-
+    // 借鉴，优雅：有个兜底的值
     public int getParameter(String key, int defaultValue) {
         Number n = getNumbers().get(key);
         if (n != null) {

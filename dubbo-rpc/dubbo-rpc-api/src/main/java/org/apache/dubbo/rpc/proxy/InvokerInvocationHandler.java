@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
+ * 重点类<br/>
  * InvokerHandler
  */
 public class InvokerInvocationHandler implements InvocationHandler {
@@ -70,7 +71,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
             rpcInvocation.put(Constants.CONSUMER_MODEL, consumerModel);
             rpcInvocation.put(Constants.METHOD_MODEL, consumerModel.getMethodModel(method));
         }
-
+        // 框架实现细节，重点：
         return invoker.invoke(rpcInvocation).recreate();
     }
 }

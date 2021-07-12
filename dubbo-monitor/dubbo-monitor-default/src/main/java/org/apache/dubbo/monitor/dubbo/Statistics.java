@@ -126,6 +126,7 @@ public class Statistics implements Serializable {
 
     @Override
     public int hashCode() {
+        // 借鉴：实现hashcode的方式，当作map的key
         final int prime = 31;
         int result = 1;
         result = prime * result + ((application == null) ? 0 : application.hashCode());

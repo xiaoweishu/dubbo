@@ -231,7 +231,7 @@ public class FailbackRegistryTest {
             if (bad) {
                 throw new RuntimeException("can not invoke!");
             }
-            //System.out.println("do doRegister");
+            System.out.println("do doRegister");
             latch.countDown();
 
         }
@@ -241,7 +241,7 @@ public class FailbackRegistryTest {
             if (bad) {
                 throw new RuntimeException("can not invoke!");
             }
-            //System.out.println("do doUnregister");
+            System.out.println("do doUnregister");
             latch.countDown();
 
         }
@@ -251,7 +251,7 @@ public class FailbackRegistryTest {
             if (bad) {
                 throw new RuntimeException("can not invoke!");
             }
-            //System.out.println("do doSubscribe");
+            System.out.println("do doSubscribe");
             super.notify(url, listener, Arrays.asList(new URL[]{serviceUrl}));
             latch.countDown();
         }
@@ -261,7 +261,7 @@ public class FailbackRegistryTest {
             if (bad) {
                 throw new RuntimeException("can not invoke!");
             }
-            //System.out.println("do doUnsubscribe");
+            System.out.println("do doUnsubscribe");
             latch.countDown();
         }
 

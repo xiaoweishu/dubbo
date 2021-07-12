@@ -50,6 +50,7 @@ public class DubboMonitor implements Monitor {
     private static final int LENGTH = 10;
 
     /**
+     * 关键字段：DubboMonitorSendTimer<br/>
      * The timer for sending statistics
      */
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3, new NamedThreadFactory("DubboMonitorSendTimer", true));
@@ -71,6 +72,7 @@ public class DubboMonitor implements Monitor {
         // The time interval for timer <b>scheduledExecutorService</b> to send data
         final long monitorInterval = monitorInvoker.getUrl().getPositiveParameter("interval", 60000);
         // collect timer for collecting statistics data
+        // 多线程，细节：
         sendFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> {
             try {
                 // collect data
@@ -156,8 +158,10 @@ public class DubboMonitor implements Monitor {
         int concurrent = url.getParameter(MonitorService.CONCURRENT, 0);
         // init atomic reference
         Statistics statistics = new Statistics(url);
+        // 借鉴，多线程，锁，细节：此处用的是数组（long[]）
         AtomicReference<long[]> reference = statisticsMap.computeIfAbsent(statistics, k -> new AtomicReference<>());
         // use CompareAndSet to sum
+        // 借鉴，多线程，锁：cas的方式保证
         long[] current;
         long[] update = new long[LENGTH];
         do {

@@ -50,6 +50,7 @@ public class ClientsTest {
 
     @Test
     public void testGetTransport3() {
+        Transporter defaultExtension = ExtensionLoader.getExtensionLoader(Transporter.class).getDefaultExtension();
         String name = "netty4";
         assertEquals(NettyTransporter.class, ExtensionLoader.getExtensionLoader(Transporter.class).getExtension(name).getClass());
     }

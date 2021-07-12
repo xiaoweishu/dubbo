@@ -713,7 +713,7 @@ public class RpcContext {
 
     /**
      * Async invocation. Timeout will be handled even if <code>Future.get()</code> is not called.
-     *
+     * 多线程，优雅：
      * @param callable
      * @return get the return result from <code>future.get()</code>
      */

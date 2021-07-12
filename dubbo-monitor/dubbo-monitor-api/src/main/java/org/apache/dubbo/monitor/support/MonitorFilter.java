@@ -58,6 +58,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     private static final String MONITOR_FILTER_START_TIME = "monitor_filter_start_time";
 
     /**
+     * 借鉴：统计器，可用google collect的 Set替代
      * The Concurrent counter
      */
     private final ConcurrentMap<String, AtomicInteger> concurrents = new ConcurrentHashMap<String, AtomicInteger>();
@@ -83,6 +84,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         if (invoker.getUrl().hasParameter(MONITOR_KEY)) {
+            // 关键逻辑：Invocation数据透传
             invocation.put(MONITOR_FILTER_START_TIME, System.currentTimeMillis());
             getConcurrent(invoker, invocation).incrementAndGet(); // count up
         }
@@ -91,6 +93,7 @@ public class MonitorFilter implements Filter, Filter.Listener {
 
     // concurrent counter
     private AtomicInteger getConcurrent(Invoker<?> invoker, Invocation invocation) {
+        // 关键逻辑：key的组成规则
         String key = invoker.getInterface().getName() + "." + invocation.getMethodName();
         return concurrents.computeIfAbsent(key, k -> new AtomicInteger());
     }
@@ -176,7 +179,8 @@ public class MonitorFilter implements Filter, Filter.Listener {
         if (result != null && result.getAttachment(OUTPUT_KEY) != null) {
             output = result.getAttachment(OUTPUT_KEY);
         }
-
+        // 框架的实现重点：这里使用的是count协议
+        // 更好实现：这里用的传pairs参数，要严格按照顺序来，不能遗漏，key,value
         return new URL(COUNT_PROTOCOL, NetUtils.getLocalHost(), localPort, service + PATH_SEPARATOR + method, MonitorService.APPLICATION, application, MonitorService.INTERFACE, service, MonitorService.METHOD, method, remoteKey, remoteValue, error ? MonitorService.FAILURE : MonitorService.SUCCESS, "1", MonitorService.ELAPSED, String.valueOf(elapsed), MonitorService.CONCURRENT, String.valueOf(concurrent), INPUT_KEY, input, OUTPUT_KEY, output, GROUP_KEY, group, VERSION_KEY, version);
     }
 

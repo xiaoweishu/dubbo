@@ -38,6 +38,7 @@ import static org.apache.dubbo.remoting.Constants.DEFAULT_CHARSET;
 
 /**
  * TelnetCodec
+ * 使用注意：该类中没有用NAME字段，但是在org.apache.dubbo.remoting.Codec2文件内部声明了name为"telnet"的实现
  */
 public class TelnetCodec extends TransportCodec {
 
