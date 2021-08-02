@@ -80,7 +80,7 @@ public abstract class AbstractDynamicConfiguration implements DynamicConfigurati
 
     @Override
     public void addListener(String key, String group, ConfigurationListener listener) {
-
+        System.err.println("AbstractDynamicConfiguration::addListener");
     }
 
     @Override

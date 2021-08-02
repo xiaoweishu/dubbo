@@ -46,6 +46,9 @@ public abstract class AbstractLoadBalance implements LoadBalance {
      * @return weight which takes warmup into account
      */
     static int calculateWarmupWeight(int uptime, int warmup, int weight) {
+        // 技巧：简化代码，00653c39b0f90206c1e3357268b991fff6c78535这次提交都是
+        // int ww = (int) ((float) uptime / ((float) warmup / (float) weight));
+        // return ww < 1 ? 1 : (ww > weight ? weight : ww);
         int ww = (int) ( uptime / ((float) warmup / weight));
         return ww < 1 ? 1 : (Math.min(ww, weight));
     }
@@ -61,6 +64,14 @@ public abstract class AbstractLoadBalance implements LoadBalance {
         return doSelect(invokers, url, invocation);
     }
 
+    /**
+     * 模板模式：doXXX命名
+     * @param invokers
+     * @param url
+     * @param invocation
+     * @param <T>
+     * @return
+     */
     protected abstract <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation);
 
 
@@ -76,6 +87,7 @@ public abstract class AbstractLoadBalance implements LoadBalance {
         int weight;
         URL url = invoker.getUrl();
         // Multiple registry scenario, load balance among multiple registries.
+        // 关键逻辑：多注册中心，负载均衡获取权重
         if (REGISTRY_SERVICE_REFERENCE_PATH.equals(url.getServiceInterface())) {
             weight = url.getParameter(REGISTRY_KEY + "." + WEIGHT_KEY, DEFAULT_WEIGHT);
         } else {

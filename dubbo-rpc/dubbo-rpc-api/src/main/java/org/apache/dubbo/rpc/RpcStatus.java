@@ -101,6 +101,14 @@ public class RpcStatus {
         if (methodStatus.active.get() == Integer.MAX_VALUE) {
             return false;
         }
+        // 看提交记录：
+        /**
+         * 原始版本：
+         *  if (methodStatus.active.incrementAndGet() > max) {
+         *      methodStatus.active.decrementAndGet();
+         *      return false;
+         *  }
+         */
         for (int i; ; ) {
             i = methodStatus.active.get();
             if (i + 1 > max) {

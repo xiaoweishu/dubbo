@@ -96,6 +96,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
         Invoker<T> selectedInvoker = null;
         WeightedRoundRobin selectedWRR = null;
         for (Invoker<T> invoker : invokers) {
+            // url的唯一标识
             String identifyString = invoker.getUrl().toIdentityString();
             int weight = getWeight(invoker, invocation);
             WeightedRoundRobin weightedRoundRobin = map.computeIfAbsent(identifyString, k -> {
@@ -118,6 +119,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
             totalWeight += weight;
         }
         if (invokers.size() != map.size()) {
+            // 看历史提交：#5881修复并发问题
             map.entrySet().removeIf(item -> now - item.getValue().getLastUpdate() > RECYCLE_PERIOD);
         }
         if (selectedInvoker != null) {

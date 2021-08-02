@@ -22,6 +22,10 @@ import org.apache.dubbo.common.extension.ExtensionLoader;
 
 import java.util.Collections;
 
+/**
+ * 设计模式，借鉴：装饰器模式，增强实现类的作用
+ * 扩展：代理模式也可以实现增强，但是不好增强多个实现类
+ */
 public class RegistryFactoryWrapper implements RegistryFactory {
     private RegistryFactory registryFactory;
 

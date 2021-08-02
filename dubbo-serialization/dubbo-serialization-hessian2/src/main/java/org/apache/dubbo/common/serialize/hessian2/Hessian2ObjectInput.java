@@ -28,7 +28,7 @@ import java.lang.reflect.Type;
  * Hessian2 object input implementation
  */
 public class Hessian2ObjectInput implements ObjectInput {
-
+    // 多线程，新奇，借鉴：通过使用ThreadLocal对象来复用实例，减少内存分配
     private static ThreadLocal<Hessian2Input> INPUT_TL = ThreadLocal.withInitial(() -> {
         Hessian2Input h2i = new Hessian2Input(null);
         h2i.setSerializerFactory(Hessian2SerializerFactory.SERIALIZER_FACTORY);

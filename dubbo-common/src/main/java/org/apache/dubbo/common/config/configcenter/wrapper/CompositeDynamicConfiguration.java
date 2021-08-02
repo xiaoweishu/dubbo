@@ -43,6 +43,7 @@ public class CompositeDynamicConfiguration implements DynamicConfiguration {
 
     @Override
     public void addListener(String key, String group, ConfigurationListener listener) {
+        System.err.println("CompositeDynamicConfiguration::addListener");
         iterateListenerOperation(configuration -> configuration.addListener(key, group, listener));
     }
 

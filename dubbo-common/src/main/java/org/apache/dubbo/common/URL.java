@@ -114,7 +114,7 @@ class URL implements Serializable {
     // ==== cache ====
 
     private volatile transient Map<String, Number> numbers;
-
+    // 关键字段：key为methodName,value 的 map key 为 传入的key值
     private volatile transient Map<String, Map<String, Number>> methodNumbers;
 
     private volatile transient Map<String, URL> urls;

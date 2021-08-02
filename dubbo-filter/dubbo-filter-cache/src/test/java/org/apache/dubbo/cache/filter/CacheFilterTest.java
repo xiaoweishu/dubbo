@@ -80,6 +80,7 @@ public class CacheFilterTest {
     @ParameterizedTest
     @MethodSource("cacheFactories")
     public void testNonArgsMethod(String cacheType, CacheFactory cacheFactory) {
+        System.err.println(cacheType);
         setUp(cacheType, cacheFactory);
         invocation.setMethodName("echo");
         invocation.setParameterTypes(new Class<?>[]{});

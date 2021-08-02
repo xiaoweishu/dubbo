@@ -18,6 +18,7 @@ package org.apache.dubbo.common.config.configcenter;
 
 import org.apache.dubbo.common.URL;
 
+import org.apache.dubbo.common.config.configcenter.wrapper.CompositeDynamicConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -144,6 +145,13 @@ public class AbstractDynamicConfigurationTest {
     public void testRemoveListener() {
         configuration.removeListener(null, null);
         configuration.removeListener(null, null, null);
+    }
+
+    @Test
+    public void testCompositeAddListener(){
+        CompositeDynamicConfiguration c = new CompositeDynamicConfiguration();
+        c.addConfiguration(configuration);
+        c.addListener("key", "group", null);
     }
 
     @Test

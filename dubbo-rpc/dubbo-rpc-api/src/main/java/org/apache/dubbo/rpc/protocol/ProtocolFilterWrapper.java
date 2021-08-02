@@ -56,6 +56,7 @@ public class ProtocolFilterWrapper implements Protocol {
         if (!filters.isEmpty()) {
             for (int i = filters.size() - 1; i >= 0; i--) {
                 final Filter filter = filters.get(i);
+                // 借鉴：
                 final Invoker<T> next = last;
                 last = new Invoker<T>() {
 
@@ -78,6 +79,7 @@ public class ProtocolFilterWrapper implements Protocol {
                     public Result invoke(Invocation invocation) throws RpcException {
                         Result asyncResult;
                         try {
+                            // 核心逻辑：过滤器链的组成
                             asyncResult = filter.invoke(next, invocation);
                         } catch (Exception e) {
                             if (filter instanceof ListenableFilter) {
