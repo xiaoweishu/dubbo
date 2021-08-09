@@ -303,7 +303,7 @@ public interface CommonConstants {
     String RETRIES_KEY = "retries";
 
     String FORKS_KEY = "forks";
-
+    // 关键字段：默认重试次数
     int DEFAULT_RETRIES = 2;
 
     int DEFAULT_FAILBACK_TIMES = 3;

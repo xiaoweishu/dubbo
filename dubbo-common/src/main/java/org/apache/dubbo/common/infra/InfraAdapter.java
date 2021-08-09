@@ -21,6 +21,7 @@ import org.apache.dubbo.common.extension.SPI;
 import java.util.Map;
 
 /**
+ * 设计模式：适配器模式，用来与第三方系统交互
  * Used to interact with other systems. Typical use cases are:
  * 1. get extra attributes from underlying infrastructures related to the instance on which Dubbo is currently deploying.
  * 2. get configurations from third-party systems which maybe useful for a specific component.

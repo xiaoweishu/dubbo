@@ -54,6 +54,7 @@ public class ZookeeperRegistryTest {
     @BeforeEach
     public void setUp() throws Exception {
         int zkServerPort = NetUtils.getAvailablePort();
+        // zk测试
         this.zkServer = new TestingServer(zkServerPort, true);
         this.zkServer.start();
 

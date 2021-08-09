@@ -88,6 +88,9 @@ public abstract class AbstractRegistry implements Registry {
     private final AtomicInteger savePropertiesRetryTimes = new AtomicInteger();
     private final Set<URL> registered = new ConcurrentHashSet<>();
     private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
+    /**
+     * 外层key是消费者Url,内层key是分类，包含providers consumers routes configurators 四种。
+     */
     private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>();
     private URL registryUrl;
     // Local disk cache file
@@ -162,7 +165,14 @@ public abstract class AbstractRegistry implements Registry {
         return lastCacheChanged;
     }
 
+    /**
+     * step1:检查版本号和文件<br/>
+     * step2:创建文件锁<br/>
+     * step3: 进行Properties的转存，失败重试<br/>
+     * @param version
+     */
     public void doSaveProperties(long version) {
+        // 细节：使用了版本号
         if (version < lastCacheChanged.get()) {
             return;
         }
@@ -175,8 +185,12 @@ public abstract class AbstractRegistry implements Registry {
             if (!lockfile.exists()) {
                 lockfile.createNewFile();
             }
-            try (RandomAccessFile raf = new RandomAccessFile(lockfile, "rw");
-                 FileChannel channel = raf.getChannel()) {
+            // 借鉴，特性：使用try-with-resources
+            try (
+                    RandomAccessFile raf = new RandomAccessFile(lockfile, "rw");
+                    FileChannel channel = raf.getChannel()
+            ) {
+                // 借鉴：使用文件锁
                 FileLock lock = channel.tryLock();
                 if (lock == null) {
                     throw new IOException("Can not lock the registry cache file " + file.getAbsolutePath() + ", ignore and retry later, maybe multi java process use the file, please config: dubbo.registry.file=xxx.properties");
@@ -187,6 +201,7 @@ public abstract class AbstractRegistry implements Registry {
                         file.createNewFile();
                     }
                     try (FileOutputStream outputFile = new FileOutputStream(file)) {
+                        // 借鉴：properties文件转储为其他文件
                         properties.store(outputFile, "Dubbo Registry Cache");
                     }
                 } finally {
@@ -232,7 +247,7 @@ public abstract class AbstractRegistry implements Registry {
             }
         }
     }
-
+    // 疑问：不知道？？
     public List<URL> getCacheUrls(URL url) {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             String key = (String) entry.getKey();
@@ -254,14 +269,12 @@ public abstract class AbstractRegistry implements Registry {
     @Override
     public List<URL> lookup(URL url) {
         List<URL> result = new ArrayList<>();
+        // 区分通知类型
         Map<String, List<URL>> notifiedUrls = getNotified().get(url);
+        // 如果有注册通知
         if (CollectionUtils.isNotEmptyMap(notifiedUrls)) {
             for (List<URL> urls : notifiedUrls.values()) {
-                for (URL u : urls) {
-                    if (!EMPTY_PROTOCOL.equals(u.getProtocol())) {
-                        result.add(u);
-                    }
-                }
+                urls.stream().filter(u -> !EMPTY_PROTOCOL.equals(u.getProtocol())).forEach(result::add);
             }
         } else {
             final AtomicReference<List<URL>> reference = new AtomicReference<>();
@@ -359,19 +372,26 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * 借鉴，设计模式：通知模式
+     *
+     * @param urls
+     */
     protected void notify(List<URL> urls) {
         if (CollectionUtils.isEmpty(urls)) {
             return;
         }
-
+        // 遍历所有订阅者
         for (Map.Entry<URL, Set<NotifyListener>> entry : getSubscribed().entrySet()) {
+            // 订阅的url
             URL url = entry.getKey();
 
             if (!UrlUtils.isMatch(url, urls.get(0))) {
                 continue;
             }
-
+            // 该Url上注册的通知监听器
             Set<NotifyListener> listeners = entry.getValue();
+            // 该Url上注册的通知监听器，一一进行通知
             if (listeners != null) {
                 for (NotifyListener listener : listeners) {
                     try {
@@ -386,10 +406,10 @@ public abstract class AbstractRegistry implements Registry {
 
     /**
      * Notify changes from the Provider side.
-     *
+     * Notify urls for subscribe url（一个通知监听器）
      * @param url      consumer side url
      * @param listener listener
-     * @param urls     provider latest urls
+     * @param urls     provider latest urls 这里传进来的值，可能是已经经过 过滤的，就是表明都是已经发生过变化的
      */
     protected void notify(URL url, NotifyListener listener, List<URL> urls) {
         if (url == null) {
@@ -408,9 +428,12 @@ public abstract class AbstractRegistry implements Registry {
         }
         // keep every provider's category.
         Map<String, List<URL>> result = new HashMap<>();
+        // 遍历 provider latest urls
         for (URL u : urls) {
+            // 过滤没有订阅相关provider的消费端，不做通知
             if (UrlUtils.isMatch(url, u)) {
                 String category = u.getParameter(CATEGORY_KEY, DEFAULT_CATEGORY);
+                // 按照category，对urls进行分类存储
                 List<URL> categoryList = result.computeIfAbsent(category, k -> new ArrayList<>());
                 categoryList.add(u);
             }
@@ -418,11 +441,16 @@ public abstract class AbstractRegistry implements Registry {
         if (result.size() == 0) {
             return;
         }
+
         Map<String, List<URL>> categoryNotified = notified.computeIfAbsent(url, u -> new ConcurrentHashMap<>());
+
         for (Map.Entry<String, List<URL>> entry : result.entrySet()) {
+
             String category = entry.getKey();
             List<URL> categoryList = entry.getValue();
             categoryNotified.put(category, categoryList);
+
+            // 向consumer端 注册的监听器上发送通知
             listener.notify(categoryList);
             // We will update our cache file after each notification.
             // When our Registry has a subscribe failure due to network jitter, we can return at least the existing cache URL.

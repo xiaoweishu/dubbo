@@ -54,11 +54,15 @@ public class ProtocolTest {
 
         assertEquals(0, InjvmProtocol.getDefaultPort());
 
-        InjvmProtocol.export(invoker);
+//        InjvmProtocol.export(invoker);
 
+
+
+        // 开始引用,也是这步开始确定Invoker的具体类型
         Invoker<IEcho> refer = InjvmProtocol.refer(IEcho.class, url);
+        // 获取Proxy对象
         IEcho echoProxy = proxyFactory.getProxy(refer);
-
+        // 触发invoke调用，开始服务调用的过程
         assertEquals("ok", echoProxy.echo("ok"));
 
         try {

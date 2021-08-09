@@ -205,6 +205,7 @@ public abstract class Proxy {
             ccm.setSuperClass(Proxy.class);
             ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }");
             Class<?> pc = ccm.toClass();
+            System.err.println("准备初始化的代理类---------------------" + pc.toGenericString() + "---------------------");
             proxy = (Proxy) pc.newInstance();
         } catch (RuntimeException e) {
             throw e;

@@ -49,6 +49,7 @@ public class TimeoutFilter implements Filter, Filter.Listener {
     @Override
     public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) {
         Object obj = RpcContext.getContext().get(TIME_COUNTDOWN_KEY);
+        // 看历史提交：此处多了TimeoutCountDown类，代替了以前的硬编码，不好扩展
         if (obj != null) {
             TimeoutCountDown countDown = (TimeoutCountDown) obj;
             if (countDown.isExpired()) {

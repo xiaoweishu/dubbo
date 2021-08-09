@@ -494,6 +494,7 @@ public class AbstractRegistryTest {
         List<URL> urls = new ArrayList<>();
         urls.add(testUrl);
         abstractRegistry.notify(urls);
+        Map<URL, Map<String, List<URL>>> notified = abstractRegistry.getNotified();
         List<URL> urlList2 = abstractRegistry.lookup(testUrl);
         Assertions.assertTrue(urlList2.contains(testUrl));
 

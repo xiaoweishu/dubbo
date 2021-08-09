@@ -33,11 +33,11 @@ import java.util.List;
 import static org.apache.dubbo.common.constants.CommonConstants.REFERENCE_INTERCEPTOR_KEY;
 
 public abstract class AbstractCluster implements Cluster {
-
+    // 借鉴：构建链式处理结构，类似于责任链模式
     private <T> Invoker<T> buildClusterInterceptors(AbstractClusterInvoker<T> clusterInvoker, String key) {
+        // 看历史提交：现在的InterceptorInvokerNode的引入极大的增强了代码的优雅，可读性
         AbstractClusterInvoker<T> last = clusterInvoker;
         List<ClusterInterceptor> interceptors = ExtensionLoader.getExtensionLoader(ClusterInterceptor.class).getActivateExtension(clusterInvoker.getUrl(), key);
-
         if (!interceptors.isEmpty()) {
             for (int i = interceptors.size() - 1; i >= 0; i--) {
                 final ClusterInterceptor interceptor = interceptors.get(i);
@@ -86,6 +86,7 @@ public abstract class AbstractCluster implements Cluster {
 
         @Override
         public Result invoke(Invocation invocation) throws RpcException {
+            // 实践：
             Result asyncResult;
             try {
                 interceptor.before(next, invocation);

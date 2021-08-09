@@ -34,7 +34,9 @@ import static org.apache.dubbo.common.constants.CommonConstants.LOCALHOST_VALUE;
 class InjvmInvoker<T> extends AbstractInvoker<T> {
 
     private final String key;
-
+    /**
+     * 存储Exporter在内存中
+     */
     private final Map<String, Exporter<?>> exporterMap;
 
     InjvmInvoker(Class<T> type, URL url, String key, Map<String, Exporter<?>> exporterMap) {

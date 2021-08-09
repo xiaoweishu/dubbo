@@ -17,6 +17,9 @@
 
 package org.apache.dubbo.rpc;
 
+/**
+ * 借鉴：包内常量
+ */
 public interface Constants {
     String LOCAL_KEY = "local";
 

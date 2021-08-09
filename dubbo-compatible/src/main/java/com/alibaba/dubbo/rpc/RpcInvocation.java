@@ -37,7 +37,9 @@ public class RpcInvocation implements Invocation, Serializable {
     private Object[] arguments;
 
     private Map<String, String> attachments;
-
+    /**
+     * 序列化时忽略该字段
+     */
     private transient Invoker<?> invoker;
 
     public RpcInvocation() {

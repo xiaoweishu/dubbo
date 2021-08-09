@@ -68,7 +68,9 @@ public class ZookeeperRegistry extends FailbackRegistry {
     private final String root;
 
     private final Set<String> anyServices = new ConcurrentHashSet<>();
-
+    /**
+     * 关键字段：和AbstractRegistry对比，ConcurrentMap<URL, Set<NotifyListener>>
+     */
     private final ConcurrentMap<URL, ConcurrentMap<NotifyListener, ChildListener>> zkListeners = new ConcurrentHashMap<>();
 
     private final ZookeeperClient zkClient;
@@ -79,6 +81,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
             throw new IllegalStateException("registry address == null");
         }
         String group = url.getParameter(GROUP_KEY, DEFAULT_ROOT);
+        //
         if (!group.startsWith(PATH_SEPARATOR)) {
             group = PATH_SEPARATOR + group;
         }
@@ -147,15 +150,19 @@ public class ZookeeperRegistry extends FailbackRegistry {
             if (ANY_VALUE.equals(url.getServiceInterface())) {
                 String root = toRootPath();
                 ConcurrentMap<NotifyListener, ChildListener> listeners = zkListeners.computeIfAbsent(url, k -> new ConcurrentHashMap<>());
-                ChildListener zkListener = listeners.computeIfAbsent(listener, k -> (parentPath, currentChilds) -> {
-                    for (String child : currentChilds) {
-                        child = URL.decode(child);
-                        if (!anyServices.contains(child)) {
-                            anyServices.add(child);
-                            subscribe(url.setPath(child).addParameters(INTERFACE_KEY, child,
-                                    Constants.CHECK_KEY, String.valueOf(false)), k);
+                // zkListener
+                ChildListener zkListener = listeners.computeIfAbsent(listener, k -> {
+                    // 代表 org.apache.dubbo.remoting.zookeeper.ChildListener
+                    return (String parentPath, List<String> currentChilds) -> {
+                        for (String child : currentChilds) {
+                            child = URL.decode(child);
+                            if (!anyServices.contains(child)) {
+                                anyServices.add(child);
+                                subscribe(url.setPath(child).addParameters(INTERFACE_KEY, child,
+                                        Constants.CHECK_KEY, String.valueOf(false)), k);
+                            }
                         }
-                    }
+                    };
                 });
                 zkClient.create(root, false);
                 List<String> services = zkClient.addChildListener(root, zkListener);
@@ -170,7 +177,9 @@ public class ZookeeperRegistry extends FailbackRegistry {
             } else {
                 List<URL> urls = new ArrayList<>();
                 for (String path : toCategoriesPath(url)) {
+
                     ConcurrentMap<NotifyListener, ChildListener> listeners = zkListeners.computeIfAbsent(url, k -> new ConcurrentHashMap<>());
+                    // 不存在的情况下
                     ChildListener zkListener = listeners.computeIfAbsent(listener, k -> (parentPath, currentChilds) -> ZookeeperRegistry.this.notify(url, k, toUrlsWithEmpty(url, parentPath, currentChilds)));
                     zkClient.create(path, false);
                     List<String> children = zkClient.addChildListener(path, zkListener);
@@ -255,10 +264,20 @@ public class ZookeeperRegistry extends FailbackRegistry {
         return paths;
     }
 
+    /**
+     * /dubbo/com.xxx.service/providers
+     * @param url
+     * @return
+     */
     private String toCategoryPath(URL url) {
         return toServicePath(url) + PATH_SEPARATOR + url.getParameter(CATEGORY_KEY, DEFAULT_CATEGORY);
     }
 
+    /**
+     * /dubbo/com.xxx.service/providers/url.toFullString()
+     * @param url
+     * @return
+     */
     private String toUrlPath(URL url) {
         return toCategoryPath(url) + PATH_SEPARATOR + URL.encode(url.toFullString());
     }
@@ -294,13 +313,14 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * When zookeeper connection recovered from a connection loss, it need to fetch the latest provider list.
-     * re-register watcher is only a side effect and is not mandate.
+     * re-register watcher is only a side effect and is not mandate. --重新注册观察者只是一个副作用，而不是强制要求
      */
     private void fetchLatestAddresses() {
         // subscribe
         Map<URL, Set<NotifyListener>> recoverSubscribed = new HashMap<URL, Set<NotifyListener>>(getSubscribed());
         if (!recoverSubscribed.isEmpty()) {
             if (logger.isInfoEnabled()) {
+                // provider list
                 logger.info("Fetching the latest urls of " + recoverSubscribed.keySet());
             }
             for (Map.Entry<URL, Set<NotifyListener>> entry : recoverSubscribed.entrySet()) {

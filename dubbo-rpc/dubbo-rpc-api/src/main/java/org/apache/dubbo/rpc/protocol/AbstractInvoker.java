@@ -193,6 +193,12 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         }
     }
 
+    /**
+     * 设计模式：模板模式
+     * @param invocation
+     * @return
+     * @throws Throwable
+     */
     protected abstract Result doInvoke(Invocation invocation) throws Throwable;
 
 }

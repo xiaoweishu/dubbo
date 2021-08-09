@@ -22,7 +22,11 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 public interface ZookeeperClient {
-
+    /**
+     *
+     * @param path
+     * @param ephemeral 临时节点
+     */
     void create(String path, boolean ephemeral);
 
     void delete(String path);

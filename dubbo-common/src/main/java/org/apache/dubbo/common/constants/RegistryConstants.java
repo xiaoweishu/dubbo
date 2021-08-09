@@ -26,7 +26,9 @@ public interface RegistryConstants {
     String DYNAMIC_KEY = "dynamic";
 
     String CATEGORY_KEY = "category";
-
+    /**
+     * 关键字段：下面的category类型字段
+     */
     String PROVIDERS_CATEGORY = "providers";
 
     String CONSUMERS_CATEGORY = "consumers";
