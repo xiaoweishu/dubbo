@@ -20,8 +20,7 @@ import org.apache.dubbo.remoting.Client;
 
 /**
  * ExchangeClient. (API/SPI, Prototype, ThreadSafe)
- *
- *
+ * 默认情况下，针对同一个 Provider 节点，Consumer 只会创建一个 ExchangeClient 实例，和服务端建立一条长连接，大家共用这一条连接
  */
 public interface ExchangeClient extends Client, ExchangeChannel {
 

@@ -40,7 +40,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 核心类：
  * NettyClient.
+ * 消费端IO线程（worker线程池）：主要负责和服务端建立连接、消息的编解码、Body 序列化、处理心跳等操作
  */
 public class NettyClient extends AbstractClient {
 

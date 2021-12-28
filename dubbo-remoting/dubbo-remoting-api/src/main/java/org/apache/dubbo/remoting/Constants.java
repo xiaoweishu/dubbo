@@ -100,7 +100,9 @@ public interface Constants {
     String DEFAULT_EXCHANGER = "header";
 
     String DISPACTHER_KEY = "dispacther";
-
+    /**
+     * 核心字段：默认的IO线程数量，可以在线程模型图中看到消费端和服务端的io线程
+     */
     int DEFAULT_IO_THREADS = Math.min(Runtime.getRuntime().availableProcessors() + 1, 32);
 
     String BIND_IP_KEY = "bind.ip";

@@ -174,10 +174,12 @@ public class AsyncRpcResult implements Result {
 
     @Override
     public Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        // 如果是 ThreadlessExecutor ，也就是同步调用，则调用 threadlessExecutor.waitAndDrain() 方法
         if (executor != null && executor instanceof ThreadlessExecutor) {
             ThreadlessExecutor threadlessExecutor = (ThreadlessExecutor) executor;
             threadlessExecutor.waitAndDrain();
         }
+        // 非同步调用，直接尝试获取调用结果 || ThreadlessExecutor 处理了结果后也会执行该方法获取结果
         return responseFuture.get(timeout, unit);
     }
 

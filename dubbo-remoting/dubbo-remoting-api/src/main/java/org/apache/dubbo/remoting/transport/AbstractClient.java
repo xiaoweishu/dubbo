@@ -88,7 +88,12 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
         }
     }
 
+    /**
+     * 构建业务线程池
+     * @param url
+     */
     private void initExecutor(URL url) {
+        // 客户端，除了用户线程外，还会有一个线程名称为DubboClientHandler-ip:port的线程池，默认是cached实现
         url = ExecutorUtil.setThreadName(url, CLIENT_THREAD_POOL_NAME);
         url = url.addParameterIfAbsent(THREADPOOL_KEY, DEFAULT_CLIENT_THREADPOOL);
         executor = executorRepository.createExecutorIfAbsent(url);

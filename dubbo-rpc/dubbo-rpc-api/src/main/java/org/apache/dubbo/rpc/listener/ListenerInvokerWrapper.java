@@ -30,6 +30,7 @@ import java.util.List;
 
 /**
  * ListenerInvoker
+ * 对应的功能是：
  */
 public class ListenerInvokerWrapper<T> implements Invoker<T> {
 
@@ -49,6 +50,7 @@ public class ListenerInvokerWrapper<T> implements Invoker<T> {
             for (InvokerListener listener : listeners) {
                 if (listener != null) {
                     try {
+                        // 在服务引用过程中触发全部InvokerListener监听器
                         listener.referred(invoker);
                     } catch (Throwable t) {
                         logger.error(t.getMessage(), t);

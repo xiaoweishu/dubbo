@@ -48,12 +48,14 @@ import static org.apache.dubbo.remoting.transport.netty4.NettyEventLoopFactory.s
 
 /**
  * NettyClient.
+ * 消费端IO线程：主要负责和服务端建立连接、消息的编解码、Body 序列化、处理心跳等操作
  */
 public class NettyClient extends AbstractClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
     /**
      * netty client bootstrap
+     * 值是 CPU 核心数+1 但最多不超过 32。所有的 NettyClient 都会共用这一个 EventLoopGroup，意味着 Consumer 不管和多少台远程节点通信，最多只会创建DEFAULT_IO_THREADS个 IO 线程
      */
     private static final EventLoopGroup NIO_EVENT_LOOP_GROUP = eventLoopGroup(Constants.DEFAULT_IO_THREADS, "NettyClientWorker");
 

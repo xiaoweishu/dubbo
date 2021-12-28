@@ -59,6 +59,7 @@ public class ExecutionChannelHandler extends WrappedChannelHandler {
         } else if (executor instanceof ThreadlessExecutor) {
             executor.execute(new ChannelEventRunnable(channel, handler, ChannelState.RECEIVED, message));
         } else {
+            //  Other messages like response, connect, disconnect,heartbeat will be directly executed by I/O thread.
             handler.received(channel, message);
         }
     }

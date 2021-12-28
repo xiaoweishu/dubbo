@@ -43,7 +43,9 @@ public class DefaultExecutorRepository implements ExecutorRepository {
     private static final Logger logger = LoggerFactory.getLogger(DefaultExecutorRepository.class);
 
     private int DEFAULT_SCHEDULER_SIZE = Runtime.getRuntime().availableProcessors();
-
+    /**
+     * 核心字段：共享线程池
+     */
     private final ExecutorService SHARED_EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory("DubboSharedHandler", true));
 
     private Ring<ScheduledExecutorService> scheduledExecutors = new Ring<>();
@@ -66,16 +68,18 @@ public class DefaultExecutorRepository implements ExecutorRepository {
 
     /**
      * Get called when the server or client instance initiating.
-     *
+     * 关键逻辑，历史提交：实现了Map中的语义，替换了之前分散在其他地方的逻辑判断代码
      * @param url
      * @return
      */
+    @Override
     public synchronized ExecutorService createExecutorIfAbsent(URL url) {
         String componentKey = EXECUTOR_SERVICE_COMPONENT_KEY;
         if (CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
             componentKey = CONSUMER_SIDE;
         }
         Map<Integer, ExecutorService> executors = data.computeIfAbsent(componentKey, k -> new ConcurrentHashMap<>());
+        // 关键逻辑：二层缓存
         Integer portKey = url.getPort();
         ExecutorService executor = executors.computeIfAbsent(portKey, k -> createExecutor(url));
         // If executor has been shut down, create a new one
@@ -87,6 +91,7 @@ public class DefaultExecutorRepository implements ExecutorRepository {
         return executor;
     }
 
+    @Override
     public ExecutorService getExecutor(URL url) {
         String componentKey = EXECUTOR_SERVICE_COMPONENT_KEY;
         if (CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
