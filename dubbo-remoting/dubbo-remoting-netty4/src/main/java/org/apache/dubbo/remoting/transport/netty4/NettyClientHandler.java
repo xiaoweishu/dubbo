@@ -111,6 +111,7 @@ public class NettyClientHandler extends ChannelDuplexHandler {
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         // send heartbeat when read idle.
+        // 收到IdleStateEvent事件后，进行心跳探活，注意：超时重连还是依靠 Dubbo 层面的重连定时任务处理
         if (evt instanceof IdleStateEvent) {
             try {
                 NettyChannel channel = NettyChannel.getOrAddChannel(ctx.channel(), url, handler);

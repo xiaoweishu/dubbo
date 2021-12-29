@@ -57,7 +57,7 @@ public class HeaderExchangeClient implements ExchangeClient {
         Assert.notNull(client, "Client can't be null");
         this.client = client;
         this.channel = new HeaderExchangeChannel(client);
-
+        // 开启心跳定时任务和重连任务
         if (startTimer) {
             URL url = client.getUrl();
             startReconnectTask(url);
@@ -196,6 +196,10 @@ public class HeaderExchangeClient implements ExchangeClient {
         }
     }
 
+    /**
+     * 无论使用哪种 NIO 组件，重连逻辑使用的都是 Dubbo 提供的
+     * @param url
+     */
     private void startReconnectTask(URL url) {
         if (shouldReconnect(url)) {
             AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);

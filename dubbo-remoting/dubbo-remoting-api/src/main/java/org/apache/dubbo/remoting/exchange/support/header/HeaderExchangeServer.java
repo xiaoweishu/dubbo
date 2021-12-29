@@ -65,6 +65,7 @@ public class HeaderExchangeServer implements ExchangeServer {
     public HeaderExchangeServer(RemotingServer server) {
         Assert.notNull(server, "server == null");
         this.server = server;
+        // 开始心跳检测任务
         startIdleCheckTask(getUrl());
     }
 
@@ -259,7 +260,11 @@ public class HeaderExchangeServer implements ExchangeServer {
     }
 
     private void startIdleCheckTask(URL url) {
+        // 不使用netty通信组件
+        // server 自己是否可以心跳检测，如果自己不能，则启动一个 CloseTimerTask 定时任务，定期关闭长时间空闲的连接
+        // NettyServer 是自己完成心跳检测的，具体依赖 NettyServerHandler 和 IdleStateHandler 实现，原理与 NettyClient 类似
         if (!server.canHandleIdle()) {
+            // 借鉴，流：使用unmodifiable的方式
             AbstractTimerTask.ChannelProvider cp = () -> unmodifiableCollection(HeaderExchangeServer.this.getChannels());
             int idleTimeout = getIdleTimeout(url);
             long idleTimeoutTick = calculateLeastDuration(idleTimeout);

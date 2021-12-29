@@ -235,7 +235,10 @@ public interface CommonConstants {
     String CHECK_KEY = "check";
 
     String BACKLOG_KEY = "backlog";
-
+    /**
+     * 核心字段：请求的事件类型。目前是NettyClientHandler发送心跳包用到了
+     * 心跳触发入口是在信息交换层(exchange)
+     */
     String HEARTBEAT_EVENT = null;
     String MOCK_HEARTBEAT_EVENT = "H";
     String READONLY_EVENT = "R";

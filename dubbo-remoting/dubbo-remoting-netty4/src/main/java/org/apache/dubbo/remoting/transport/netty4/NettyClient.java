@@ -108,7 +108,8 @@ public class NettyClient extends AbstractClient {
                 if (getUrl().getParameter(SSL_ENABLED_KEY, false)) {
                     ch.pipeline().addLast("negotiation", SslHandlerInitializer.sslClientHandler(getUrl(), nettyClientHandler));
                 }
-
+                // 客户端检测的是读超时，服务端检测的是读写超时
+                // 一般情况下客户端先发起心跳（写）[IdleStateHandler 是单向的，客户端->服务端]，所以整个链路中不通的情况只可能是：（1）服务接收（读） （2）服务端发送（写） （3）客户端接收（读）
                 NettyCodecAdapter adapter = new NettyCodecAdapter(getCodec(), getUrl(), NettyClient.this);
                 ch.pipeline()//.addLast("logging",new LoggingHandler(LogLevel.INFO))//for debug
                         .addLast("decoder", adapter.getDecoder())
