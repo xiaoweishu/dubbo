@@ -76,6 +76,7 @@ public abstract class AbstractServer extends AbstractEndpoint implements Remotin
             throw new RemotingException(url.toInetSocketAddress(), null, "Failed to bind " + getClass().getSimpleName()
                     + " on " + getLocalAddress() + ", cause: " + t.getMessage(), t);
         }
+        // 在服务端，除了有boss线程、worker线程（io线程），还有一个线程名称为DubboServerHandler-ip:port的线程池，其默认实现是fixed线程池
         executor = executorRepository.createExecutorIfAbsent(url);
     }
     // 借鉴：模板方法

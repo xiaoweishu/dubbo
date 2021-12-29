@@ -21,33 +21,38 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * The most important difference between this Executor and other normal Executor is that this one doesn't manage
  * any thread.
- *
+ * <p>
  * Tasks submitted to this executor through {@link #execute(Runnable)} will not get scheduled to a specific thread, though normal executors always do the schedule.
  * Those tasks are stored in a blocking queue and will only be executed when a thread calls {@link #waitAndDrain()}, the thread executing the task
  * is exactly the same as the one calling waitAndDrain.
+ * 需要注意点是：该类啥时候会被使用
  */
 public class ThreadlessExecutor extends AbstractExecutorService {
     private static final Logger logger = LoggerFactory.getLogger(ThreadlessExecutor.class.getName());
-
+    /**
+     * 堵塞队列queue(用来在IO线程和业务线程之间传递响应任务),存储响应任务，最终会将响应任务交给等待的业务线程处理
+     */
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-
+    /**
+     * ThreadlessExecutor底层关联的共享线程池，主要用于当业务线程不再等待响应时，会由该线程池处理任务，执行任务的与调用 execute() 方法的不是同一个线程
+     */
     private ExecutorService sharedExecutor;
-
+    /**
+     * 指向请求对应的 DefaultFuture
+     */
     private CompletableFuture<?> waitingFuture;
-
+    /**
+     * finished 和 waiting 字段控制着等待任务的处理
+     */
     private boolean finished = false;
-
+    /**
+     * the caller thread（业务线程） is still waiting？
+     */
     private volatile boolean waiting = true;
 
     private final Object lock = new Object();
@@ -56,6 +61,11 @@ public class ThreadlessExecutor extends AbstractExecutorService {
         this.sharedExecutor = sharedExecutor;
     }
 
+    /**
+     * 目前没有其他类使用
+     *
+     * @return
+     */
     public CompletableFuture<?> getWaitingFuture() {
         return waitingFuture;
     }
@@ -71,6 +81,8 @@ public class ThreadlessExecutor extends AbstractExecutorService {
     /**
      * Waits until there is a task, executes the task and all queued tasks (if there're any). The task is either a normal
      * response or a timeout response.
+     * 该方法一般与一次 RPC 调用绑定，只会执行一次(对于同步调用，ThreadlessExecutore 每次都会创建)。存储在阻塞队列中的任务，只有当线程调用该方法时才会执行，
+     * 重要：执行任务的与调用 waitAndDrain() 方法的是同一个线程
      */
     public void waitAndDrain() throws InterruptedException {
         /**
@@ -85,14 +97,14 @@ public class ThreadlessExecutor extends AbstractExecutorService {
         if (finished) {
             return;
         }
-
+        // 取出头部任务，如果没有任务，当前线程会堵塞
         Runnable runnable = queue.take();
 
         synchronized (lock) {
             waiting = false;
             runnable.run();
         }
-
+        // 取出头部任务，如果没有任务，直接返回null，不会堵塞线程
         runnable = queue.poll();
         while (runnable != null) {
             try {
@@ -103,29 +115,19 @@ public class ThreadlessExecutor extends AbstractExecutorService {
             }
             runnable = queue.poll();
         }
-        // mark the status of ThreadlessExecutor as finished.
+        // mark the status of ThreadlessExecutor as finished，完成后无业务线程等待
         finished = true;
     }
 
     public long waitAndDrain(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
-        /*long startInMs = System.currentTimeMillis();
-        Runnable runnable = queue.poll(timeout, unit);
-        if (runnable == null) {
-            throw new TimeoutException();
-        }
-        runnable.run();
-        long elapsedInMs = System.currentTimeMillis() - startInMs;
-        long timeLeft = timeout - elapsedInMs;
-        if (timeLeft < 0) {
-            throw new TimeoutException();
-        }
-        return timeLeft;*/
         throw new UnsupportedOperationException();
     }
 
     /**
-     * If the calling thread is still waiting for a callback task, add the task into the blocking queue to wait for schedule.
+     * If the calling thread（业务线程） is still waiting for a callback task, add the task into the blocking queue to wait for schedule.
      * Otherwise, submit to shared callback executor directly.
+     * 细节：线程池的execute方法重写
+     * 收到响应时，IO线程生成一个任务执行，此时代表应该返回响应结果了（已超时，出现异常，或者正常结果）
      *
      * @param runnable
      */
@@ -135,6 +137,7 @@ public class ThreadlessExecutor extends AbstractExecutorService {
             if (!waiting) {
                 sharedExecutor.execute(runnable);
             } else {
+                // 业务线程还在等待，则将任务写入队列，最终由业务线程自己执行（业务线程在 waitAndDrain 方法上等待任务）
                 queue.add(runnable);
             }
         }
@@ -142,6 +145,7 @@ public class ThreadlessExecutor extends AbstractExecutorService {
 
     /**
      * tells the thread blocking on {@link #waitAndDrain()} to return, despite of the current status, to avoid endless waiting.
+     * 持有waitingFuture的意义
      */
     public void notifyReturn(Throwable t) {
         // an empty runnable task.
