@@ -230,6 +230,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             attributes = new HashMap<>();
             for (MethodConfig methodConfig : getMethods()) {
                 AbstractConfig.appendParameters(map, methodConfig, methodConfig.getName());
+                // 核心逻辑：重试次数
                 String retryKey = methodConfig.getName() + ".retry";
                 if (map.containsKey(retryKey)) {
                     String retryValue = map.remove(retryKey);

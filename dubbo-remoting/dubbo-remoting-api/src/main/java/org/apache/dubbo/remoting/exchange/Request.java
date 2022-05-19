@@ -28,11 +28,15 @@ import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 public class Request {
 
     private static final AtomicLong INVOKE_ID = new AtomicLong(0);
-
+    /**
+     * 核心字段：和response对象中的id值一样，代表一次请求响应
+     */
     private final long mId;
 
     private String mVersion;
-
+    /**
+     * 核心字段：NettyClientHandler发送心跳请求，为true
+     */
     private boolean mTwoWay = true;
 
     private boolean mEvent = false;

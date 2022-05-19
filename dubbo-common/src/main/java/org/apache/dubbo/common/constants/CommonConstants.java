@@ -142,7 +142,9 @@ public interface CommonConstants {
      * Default timeout value in milliseconds for server shutdown
      */
     int DEFAULT_SERVER_SHUTDOWN_TIMEOUT = 10000;
-
+    /**
+     * 核心字段key,可以从url或者是服务提供者还是消费者端
+     */
     String SIDE_KEY = "side";
 
     String PROVIDER_SIDE = "provider";
@@ -302,7 +304,9 @@ public interface CommonConstants {
     String LOADBALANCE_KEY = "loadbalance";
 
     String DEFAULT_LOADBALANCE = "random";
-
+    /**
+     * 关键字段：重试次数，会作为url中key
+     */
     String RETRIES_KEY = "retries";
 
     String FORKS_KEY = "forks";

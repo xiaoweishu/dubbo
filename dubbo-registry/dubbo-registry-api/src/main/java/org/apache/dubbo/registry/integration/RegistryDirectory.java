@@ -232,7 +232,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 .filter(this::isValidCategory)
                 .filter(this::isNotCompatibleFor26x)
                 .collect(Collectors.groupingBy(this::judgeCategory));
-
+        //
         List<URL> configuratorURLs = categoryUrls.getOrDefault(CONFIGURATORS_CATEGORY, Collections.emptyList());
         this.configurators = Configurator.toConfigurators(configuratorURLs).orElse(this.configurators);
 
@@ -254,6 +254,11 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         refreshOverrideAndInvoker(providerURLs);
     }
 
+    /**
+     * 核心逻辑：通过URL区分出 providers,routers,configurators目录类别
+     * @param url
+     * @return
+     */
     private String judgeCategory(URL url) {
         if (UrlUtils.isConfigurator(url)) {
             return CONFIGURATORS_CATEGORY;
@@ -268,6 +273,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private void refreshOverrideAndInvoker(List<URL> urls) {
         // mock zookeeper://xxx?mock=return null
         overrideDirectoryUrl();
+        // 核心逻辑：销毁和重新创建invoker
         refreshInvoker(urls);
     }
 
