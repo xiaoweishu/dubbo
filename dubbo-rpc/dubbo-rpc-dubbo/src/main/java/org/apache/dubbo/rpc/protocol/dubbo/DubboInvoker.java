@@ -54,6 +54,38 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
 
 /**
  * DubboInvoker
+ * DubboInvoker 是 Dubbo 框架中用于实现远程调用的核心类之一。
+ * 它继承自 AbstractInvoker，封装了基于 Dubbo 协议的远程调用逻辑。
+ * 主要职责包括：
+ * 管理 ExchangeClient（通信客户端）实例，支持负载均衡。
+ * 实现远程方法调用的核心逻辑，包括同步和异步调用。
+ * 提供超时控制、连接状态检查以及资源销毁等功能。
+ * <p>
+ * ---
+ * <p>
+ * ### 设计思想分析
+ * <p>
+ * 1. **模块化设计**
+ * - `DubboInvoker` 封装了远程调用的核心逻辑，职责单一，符合单一职责原则。
+ * - 通过继承 `AbstractInvoker`，复用了通用的 Invoker 功能，减少了代码冗余。
+ * <p>
+ * 2. **负载均衡**
+ * - 使用 `AtomicPositiveInteger` 实现轮询负载均衡，确保多个客户端之间的请求分布均匀。
+ * <p>
+ * 3. **异步与同步支持**
+ * - 支持单向调用（oneway）和双向调用（async/sync），满足不同场景的需求。
+ * - 异步调用通过 `CompletableFuture` 实现，提升了性能和灵活性。
+ * <p>
+ * 4. **超时与异常处理**
+ * - 提供了完善的超时控制机制，支持动态计算超时时间和倒计时功能。
+ * - 异常处理逻辑清晰，能够捕获并转换为统一的 `RpcException`。
+ * <p>
+ * 5. **线程安全与资源管理**
+ * - 使用 `ReentrantLock` 确保 `destroy` 方法的线程安全性。
+ * - 在销毁时，关闭所有通信客户端并清理资源，避免内存泄漏。
+ * <p>
+ * 6. **扩展性**
+ * - 通过 URL 参数动态配置服务的行为（如超时时间、版本号等），增强了框架的灵活性和可扩展性。
  */
 public class DubboInvoker<T> extends AbstractInvoker<T> {
 

@@ -43,6 +43,41 @@ import static org.apache.dubbo.common.constants.CommonConstants.TIMEOUT_KEY;
 
 /**
  * DefaultFuture.
+ * DefaultFuture 是 Dubbo 框架中用于管理异步调用的核心类。
+ * 它继承自 CompletableFuture，封装了请求和响应的生命周期管理逻辑。
+ * 主要职责包括：
+ * 管理请求与响应的映射关系。
+ * 提供超时检测机制，确保请求不会无限等待。
+ * 支持异步线程池执行，提升性能。
+ * 处理通道关闭、请求取消等异常场景。
+ * <p>
+ * ---
+ * <p>
+ * ### 设计思想分析
+ * <p>
+ * 1. **异步编程模型**
+ * - `DefaultFuture` 继承自 `CompletableFuture`，充分利用 Java 的异步编程能力。
+ * - 支持异步回调和线程池执行，提升了系统的并发性能。
+ * <p>
+ * 2. **超时控制**
+ * - 使用 `HashedWheelTimer` 实现高效的超时检测机制。
+ * - 超时任务会在请求完成后自动取消，避免资源浪费。
+ * <p>
+ * 3. **线程安全与并发控制**
+ * - 使用 `ConcurrentHashMap` 管理请求和通道的映射关系，确保线程安全。
+ * - 超时检测任务通过线程池执行，避免阻塞主线程。
+ * <p>
+ * 4. **异常处理**
+ * - 提供了完善的异常处理机制，包括超时异常、网络异常和请求取消。
+ * - 在通道关闭时，能够主动返回未完成的请求，避免死锁。
+ * <p>
+ * 5. **扩展性与灵活性**
+ * - 支持动态配置超时时间，适应不同的业务场景。
+ * - 提供了对 `ThreadlessExecutor` 的特殊支持，满足特定的线程模型需求。
+ * <p>
+ * 6. **日志与调试**
+ * - 详细记录超时和异常信息，便于问题排查。
+ * - 提供了 `getRequestWithoutData` 方法，避免敏感数据泄露。
  */
 public class DefaultFuture extends CompletableFuture<Object> {
 

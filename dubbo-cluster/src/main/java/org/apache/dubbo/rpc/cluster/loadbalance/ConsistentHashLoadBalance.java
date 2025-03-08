@@ -34,6 +34,39 @@ import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SPLIT_PATT
 
 /**
  * ConsistentHashLoadBalance
+ * ConsistentHashLoadBalance 是 Dubbo 框架中实现一致性哈希负载均衡算法的类。
+ * 它继承自 AbstractLoadBalance，提供了基于一致性哈希算法的负载均衡策略。
+ * 主要职责包括：
+ * 根据请求参数选择合适的 Invoker（服务提供者）。
+ * 支持配置虚拟节点数量和参与哈希计算的参数索引。
+ * 确保在服务实例增减时，尽量减少已有请求的重新分配。
+ * <p>
+ * ---
+ * <p>
+ * ### 设计思想分析
+ * <p>
+ * 1. **一致性哈希算法**
+ * - 一致性哈希算法通过将服务提供者的地址映射到哈希环上，确保请求能够均匀分布到各个提供者。
+ * - 引入虚拟节点（replicas），增加哈希环上的点，减少服务实例增减时对已有请求的影响。
+ * <p>
+ * 2. **参数化哈希计算**
+ * - 支持通过配置项指定参与哈希计算的参数索引，增强了灵活性。
+ * - 用户可以根据业务需求选择最能代表请求特征的参数进行哈希计算，提高负载均衡的效果。
+ * <p>
+ * 3. **缓存与复用**
+ * - 使用 `ConcurrentHashMap` 缓存不同方法的选择器，避免重复创建，提升性能。
+ * - 当 Invoker 列表发生变化时，重新创建选择器，确保一致性哈希结果的准确性。
+ * <p>
+ * 4. **线程安全与并发控制**
+ * - 使用 `ConcurrentHashMap` 和 `TreeMap` 确保多线程环境下的线程安全。
+ * - 在构造选择器时，通过哈希码检测 Invoker 列表的变化，保证选择器的及时更新。
+ * <p>
+ * 5. **异常处理**
+ * - 在 MD5 计算过程中捕获 `NoSuchAlgorithmException` 并抛出运行时异常，确保框架的健壮性。
+ * <p>
+ * 6. **扩展性与灵活性**
+ * - 支持动态配置虚拟节点数量和参数索引，适应不同的业务场景。
+ * - 提供了灵活的负载均衡策略，用户可以通过配置文件轻松切换不同的负载均衡算法。
  */
 public class ConsistentHashLoadBalance extends AbstractLoadBalance {
     public static final String NAME = "consistenthash";
